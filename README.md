@@ -81,7 +81,7 @@ Here are the main variables to set up to use this script.
 
     tax_tab <- read.table(tax_file, header = TRUE, comment.char = "", sep = "\t", fill = TRUE)
     names(tax_tab)[1] <- "OTU"
-    tax_tab[1:5,1:5]
+    tax_tab[1:5,1:54]
 
     ##    OTU  kingdom          phylum                          class
     ## 1 OTU1  Archaea  Thaumarchaeota Soil Crenarchaeotic Group(SCG)
@@ -89,12 +89,7 @@ Here are the main variables to set up to use this script.
     ## 3 OTU3  Archaea  Thaumarchaeota Soil Crenarchaeotic Group(SCG)
     ## 4 OTU4 Bacteria  Proteobacteria            Alphaproteobacteria
     ## 5 OTU5  Archaea  Thaumarchaeota Soil Crenarchaeotic Group(SCG)
-    ##                 order
-    ## 1 uncultured archaeon
-    ## 2  Chthoniobacterales
-    ## 3 uncultured archaeon
-    ## 4         Rhizobiales
-    ## 5
+
 
 #### 3. Parse the taxonomic file
 
