@@ -6,7 +6,9 @@ corresponding [annotation file](input_files/taxonomic_annotation.txt).
 Both input files should be tab-separated and contain as first column the 
 OTU identifiers. Of course those should be the same between the two
 files. Their first line should either contain the sample names (for the
-OTU table), or the taxonomic level of annotations.
+OTU table) or the phylogenetic levels of the taxonomic annotations.
+
+A R version of this script can be found [here](bubble_plot_script.R)
 
 #### 1. Import variables
 
@@ -90,7 +92,7 @@ Here are the main variables to set up to use this script.
 
 #### 3. Parse the taxonomic file
 
-This code removes useless annotations from the taxonomic table, such as
+This code removes useless annotations from the taxonomic annotation file, such as
 'uncultured bacteria', or 'unkwown family', and fills the blanks by
 copying the previous taxonomic levels (while adding an 'unassigned'
 mention).
@@ -205,7 +207,7 @@ relative abundances instead of reads counts. It won't hurt.
 
 #### 7. Sort the table by decreasing size of taxonomic groups
 
-Here we only keep the 'x' top taxonomic groups, as defined in the
+Here we only keep the top n taxonomic groups, as defined in the
 `tax_number` variable. All the others taxonomic groups will be pooled
 together in a new bin labelled 'Other'.
 
@@ -244,8 +246,6 @@ together in a new bin labelled 'Other'.
     # Or alternatively choose a higher taxonomic level to display
 
 #### 8. Transpose 'm4'
-
-It's needed to 'melt' it later.
 
     n <- m4$taxonomy
     m4.t <- as.data.frame(t(m4[,-1]))
@@ -295,7 +295,7 @@ It's needed to 'melt' it later.
 
 #### 11. Final rearragement of the dataframe
 
-Few last things before we can plot the data!
+Few last steps before we can plot the data!
 
     molten$id <- NULL
     molten$sample.y <- NULL
@@ -325,7 +325,7 @@ Few last things before we can plot the data!
     bubble.
 -   You can choose between different palettes from 'ColorBrewer2', as
     shown here: ![](pictures/color_brewer2_palettes.png)
--   It could be that ther are not enough colours in this different sets
+-   It could be that there are not enough colours in this different sets
     to cover all the categories to display. In this case, some of them
     will appear transparent in the plot. To fix this, you can
     alternatively:
