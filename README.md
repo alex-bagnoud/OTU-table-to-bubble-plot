@@ -62,7 +62,7 @@ Here are the main variables to set up to use this script.
     file_name <- "bubble_plot.svg"
 
     # Dimension (in inch) of this file (first number is the width, the second number is the height)
-    plot_dim <- c(7,9)
+    plot_dim <- c(6,6)
 
 #### 2. Import files
 
