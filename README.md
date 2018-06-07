@@ -353,7 +353,7 @@ Few last things before we can plot the data!
 
     bubble_plot
 
-![](bubble_plot2.svg)
+![](bubble_plot.svg)
 
 #### 13. Exporting the plot
 
