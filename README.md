@@ -1,10 +1,9 @@
 # OTU-table-to-bubble-plot
-R script to create from OTU/ASV tables nice bubble plots for your scientific publications
 
-This R script computes a bubble plots from an OTU/ASV table and from a
-corresponding annotation file.
+This R script computes a bubble plots from an [OTU/ASV table](input_files/otu_table.txt) and from a
+corresponding [annotation file](input_files/taxonomic_annoation.txt).
 
-Both input files should be tab-separated and contain as first column the
+Both input files should be tab-separated and contain as first column the 
 OTU identifiers. Of course those should be the same between the two
 files. Their first line should either contain the sample names (for the
 OTU table), or the taxonomic level of annotations.
@@ -29,7 +28,6 @@ Here are the main variables to set up to use this script.
                      "S2.10", "S2.11", "S2.12",
                      "S2.13", "S2.14", "S2.15",
                      "S2.16", "S2.17", "S2.18")
-
 
     # List of the corresponding replicates groups to which the individual replicates belong to.
     # The order should match the one of 'replicates_list'.
@@ -90,7 +88,6 @@ Here are the main variables to set up to use this script.
     ## 4 OTU4 Bacteria  Proteobacteria            Alphaproteobacteria
     ## 5 OTU5  Archaea  Thaumarchaeota Soil Crenarchaeotic Group(SCG)
 
-
 #### 3. Parse the taxonomic file
 
 This code removes useless annotations from the taxonomic table, such as
@@ -149,7 +146,6 @@ mention).
         }
     }
 
-
 #### 4. Compute the relative abundance of OTUs for each sample
 
 You can run this command even if your OTU table already contains
@@ -206,7 +202,6 @@ relative abundances instead of reads counts. It won't hurt.
     ## 3                         Acidobacteria;DS-100 0.00000000 0.00000000     0
     ## 4                         Acidobacteria;Nov.24 0.00000000 0.00000000     0
     ## 5                        Acidobacteria;PAUC26f 0.00000000 0.00000000     0
-
 
 #### 7. Sort the table by decreasing size of taxonomic groups
 
@@ -286,7 +281,6 @@ It's needed to 'melt' it later.
 
     ## [1]  6 42
 
-
 #### 10. Melt and merge the two dataframes
 
     # Melt the dataframes
@@ -359,7 +353,7 @@ Few last things before we can plot the data!
 
     bubble_plot
 
-![](bubble_plot_script_files/figure-markdown_strict/unnamed-chunk-12-1.png)
+![](bubble_plot.svg)
 
 #### 13. Exporting the plot
 
