@@ -81,7 +81,7 @@ Here are the main variables to set up to use this script.
 
     tax_tab <- read.table(tax_file, header = TRUE, comment.char = "", sep = "\t", fill = TRUE)
     names(tax_tab)[1] <- "OTU"
-    tax_tab[1:5,1:54]
+    tax_tab[1:5,1:4]
 
     ##    OTU  kingdom          phylum                          class
     ## 1 OTU1  Archaea  Thaumarchaeota Soil Crenarchaeotic Group(SCG)
@@ -149,20 +149,6 @@ mention).
         }
     }
 
-    tax_tab3[1:5,1:5]
-
-    ##    OTU  kingdom          phylum                          class
-    ## 1 OTU1  Archaea  Thaumarchaeota Soil Crenarchaeotic Group(SCG)
-    ## 2 OTU2 Bacteria Verrucomicrobia                 Spartobacteria
-    ## 3 OTU3  Archaea  Thaumarchaeota Soil Crenarchaeotic Group(SCG)
-    ## 4 OTU4 Bacteria  Proteobacteria            Alphaproteobacteria
-    ## 5 OTU5  Archaea  Thaumarchaeota Soil Crenarchaeotic Group(SCG)
-    ##                                       order
-    ## 1 unassigned Soil Crenarchaeotic Group(SCG)
-    ## 2                        Chthoniobacterales
-    ## 3 unassigned Soil Crenarchaeotic Group(SCG)
-    ## 4                               Rhizobiales
-    ## 5 unassigned Soil Crenarchaeotic Group(SCG)
 
 #### 4. Compute the relative abundance of OTUs for each sample
 
@@ -212,7 +198,7 @@ relative abundances instead of reads counts. It won't hurt.
 
     ## [1] 330  19
 
-    m3[1:5,1:5]
+    m3[1:5,1:4]
 
     ##                                        Group.1      S2.10      S2.11 S2.12
     ## 1                         Acidobacteria;ABS-19 0.00000000 0.00000000     0
@@ -220,12 +206,7 @@ relative abundances instead of reads counts. It won't hurt.
     ## 3                         Acidobacteria;DS-100 0.00000000 0.00000000     0
     ## 4                         Acidobacteria;Nov.24 0.00000000 0.00000000     0
     ## 5                        Acidobacteria;PAUC26f 0.00000000 0.00000000     0
-    ##   S2.13
-    ## 1     0
-    ## 2     0
-    ## 3     0
-    ## 4     0
-    ## 5     0
+
 
 #### 7. Sort the table by decreasing size of taxonomic groups
 
@@ -277,26 +258,6 @@ It's needed to 'melt' it later.
     m4.t$sample <- rownames(m4.t)
     rownames(m4.t) <- NULL
 
-    m4.t[1:5,1:5]
-
-    ##   Acidobacteria;Acidobacteriaceae (Subgroup 1)
-    ## 1                                  0.012123635
-    ## 2                                  0.019683865
-    ## 3                                  0.000000000
-    ## 4                                  0.000000000
-    ## 5                                  0.005187836
-    ##   Acidobacteria;unassigned Subgroup 2 Acidobacteria;unassigned Subgroup 4
-    ## 1                                   0                         0.007860378
-    ## 2                                   0                         0.000000000
-    ## 3                                   0                         0.011932175
-    ## 4                                   0                         0.015535688
-    ## 5                                   0                         0.008407871
-    ##   Acidobacteria;unassigned Subgroup 6 Actinobacteria;480-2
-    ## 1                          0.11644018          0.008393285
-    ## 2                          0.04175365          0.040262451
-    ## 3                          0.11471635          0.012141511
-    ## 4                          0.17543602          0.014802873
-    ## 5                          0.14677997          0.022450805
 
 #### 9. Calculate the mean and the standard deviation for each sample
 
@@ -315,27 +276,6 @@ It's needed to 'melt' it later.
 
     ## [1]  6 42
 
-    m4.t.mean[1:5,1:5]
-
-    ##   sample Acidobacteria;Acidobacteriaceae (Subgroup 1)
-    ## 1  Soil1                                 0.0200271436
-    ## 2  Soil2                                 0.1203638938
-    ## 3  Soil3                                 0.0009469697
-    ## 4  Soil4                                 0.0106025000
-    ## 5  Soil5                                 0.0017292787
-    ##   Acidobacteria;unassigned Subgroup 2 Acidobacteria;unassigned Subgroup 4
-    ## 1                         0.001273209                         0.003210969
-    ## 2                         0.032561881                         0.000957025
-    ## 3                         0.000000000                         0.004554582
-    ## 4                         0.000000000                         0.006597518
-    ## 5                         0.000000000                         0.010339350
-    ##   Acidobacteria;unassigned Subgroup 6
-    ## 1                         0.048090205
-    ## 2                         0.006000395
-    ## 3                         0.075593182
-    ## 4                         0.090970061
-    ## 5                         0.168532625
-
     # Compute the standard deviation                             
     m4.t.sd <- aggregate(m4.t[,1:(ncol(m4.t)-2)],
                                   by = list(m4.t$replicate),
@@ -346,26 +286,6 @@ It's needed to 'melt' it later.
 
     ## [1]  6 42
 
-    m4.t.sd[1:5,1:5]
-
-    ##   sample Acidobacteria;Acidobacteriaceae (Subgroup 1)
-    ## 1  Soil1                                  0.007475104
-    ## 2  Soil2                                  0.038021718
-    ## 3  Soil3                                  0.001640200
-    ## 4  Soil4                                  0.009929704
-    ## 5  Soil5                                  0.002995199
-    ##   Acidobacteria;unassigned Subgroup 2 Acidobacteria;unassigned Subgroup 4
-    ## 1                         0.001123887                         0.005561562
-    ## 2                         0.014609783                         0.001657616
-    ## 3                         0.000000000                         0.004108624
-    ## 4                         0.000000000                         0.006065502
-    ## 5                         0.000000000                         0.004549277
-    ##   Acidobacteria;unassigned Subgroup 6
-    ## 1                          0.01573852
-    ## 2                          0.01039299
-    ## 3                          0.01637173
-    ## 4                          0.04263137
-    ## 5                          0.01925274
 
 #### 10. Melt and merge the two dataframes
 
@@ -452,6 +372,4 @@ Illustrator. Alternatively, the plot can be saved as pdf using the
     bubble_plot
     dev.off()
 
-    ## quartz_off_screen 
-    ##                 2
 
