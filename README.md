@@ -3,6 +3,8 @@
 This R script computes a bubble plots from an [OTU/ASV table](input_files/otu_table.txt) and from a
 corresponding [annotation file](input_files/taxonomic_annotation.txt).
 
+This repo was forked by my colleague Lokeshi, thanks man!
+
 Both input files should be tab-separated and contain as first column the 
 OTU identifiers. Of course those should be the same between the two
 files. Their first line should either contain the sample names (for the
