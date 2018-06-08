@@ -15,56 +15,56 @@ A R version of this script can be found [here](bubble_plot_script.R)
 Here are the main variables to set up to use this script.
 ```r
 # Load the environment
-    library("reshape2")
-    library("stringr")
-    library("ggplot2")
+library("reshape2")
+library("stringr")
+library("ggplot2")
 
-    # Path to input files
-    otu_tab_file <- "input_files/otu_table.txt"
-    tax_file <- "input_files/taxonomic_annotation.txt"
+# Path to input files
+otu_tab_file <- "input_files/otu_table.txt"
+tax_file <- "input_files/taxonomic_annotation.txt"
 
-    # List of all replicates, ordered. The names should match the ones in the OTU table.
-    replicates_list <- c("S2.1", "S2.2", "S2.3",
+# List of all replicates, ordered. The names should match the ones in the OTU table.
+replicates_list <- c("S2.1", "S2.2", "S2.3",
                      "S2.4", "S2.5", "S2.6",
                      "S2.7", "S2.8", "S2.9",
                      "S2.10", "S2.11", "S2.12",
                      "S2.13", "S2.14", "S2.15",
                      "S2.16", "S2.17", "S2.18")
 
-    # List of the corresponding replicates groups to which the individual replicates belong to.
-    # The order should match the one of 'replicates_list'.
-    # If some samples were not replicated, simply re-copy here the 'replicates_list' just above.
-    # The order of this list determines the sample order in the bubble plot.
-    replicates_groups <- c("Soil1", "Soil1", "Soil1",
-                           "Soil2", "Soil2", "Soil2",
-                           "Soil3", "Soil3", "Soil3",
-                           "Soil4", "Soil4", "Soil4",
-                           "Soil5", "Soil5", "Soil5",
-                           "Soil6", "Soil6", "Soil6")
+# List of the corresponding replicates groups to which the individual replicates belong to.
+# The order should match the one of 'replicates_list'.
+# If some samples were not replicated, simply re-copy here the 'replicates_list' just above.
+# The order of this list determines the sample order in the bubble plot.
+replicates_groups <- c("Soil1", "Soil1", "Soil1",
+                       "Soil2", "Soil2", "Soil2",
+                       "Soil3", "Soil3", "Soil3",
+                       "Soil4", "Soil4", "Soil4",
+                       "Soil5", "Soil5", "Soil5",
+                       "Soil6", "Soil6", "Soil6")
 
-    # Do these two list have the same length?
-    length(replicates_list) == length(replicates_groups) 
+# Do these two list have the same length?
+length(replicates_list) == length(replicates_groups) 
 
-    ## [1] TRUE
+## [1] TRUE
 
-    # Taxonomic level that will be aggregated and displaeyed in the bubble plot.
-    # It should match a taxonomic level from the taxonomic annotation file.
-    # If you want to display OTUs/ASVs, simply write 'OTU'.
-    tax_aggr <- "family"
+# Taxonomic level that will be aggregated and displaeyed in the bubble plot.
+# It should match a taxonomic level from the taxonomic annotation file.
+# If you want to display OTUs/ASVs, simply write 'OTU'.
+tax_aggr <- "family"
 
-    # Number of taxonomic bins to be displayed in the bubble plot.
-    tax_number <- 40
+# Number of taxonomic bins to be displayed in the bubble plot.
+tax_number <- 40
 
-    # Taxonomic level that will be used for colouring bubbles (i.e. categorical variable)
-    # It should match a taxonomic level from the taxonomic annotation file
-    # (and it should be a higher taxonomic level that the one from 'tax_aggr').
-    tax_col <- "phylum"
+# Taxonomic level that will be used for colouring bubbles (i.e. categorical variable)
+# It should match a taxonomic level from the taxonomic annotation file
+# (and it should be a higher taxonomic level that the one from 'tax_aggr').
+tax_col <- "phylum"
 
-    # Filename for saving the bubble plot (svg or pdf)
-    file_name <- "bubble_plot.svg"
+# Filename for saving the bubble plot (svg or pdf)
+file_name <- "bubble_plot.svg"
 
-    # Dimension (in inch) of this file (first number is the width, the second number is the height)
-    plot_dim <- c(6,6)
+# Dimension (in inch) of this file (first number is the width, the second number is the height)
+plot_dim <- c(6,6)
 ```
 
 #### 2. Import files
