@@ -68,29 +68,29 @@ plot_dim <- c(6,6)
 ```
 
 #### 2. Import files
+```r
+otu_tab <- read.table(otu_tab_file, header = TRUE, comment.char = "", sep = "\t")
+names(otu_tab)[1] <- "OTU"
 
-    otu_tab <- read.table(otu_tab_file, header = TRUE, comment.char = "", sep = "\t")
-    names(otu_tab)[1] <- "OTU"
-    otu_tab[1:5,1:5]
+otu_tab[1:5,1:5]
+##    OTU       S2.10      S2.11      S2.12       S2.13
+## 1 OTU1 0.110178524 0.01222786 0.22880469 0.178220724
+## 2 OTU2 0.017186251 0.26662690 0.02470170 0.000000000
+## 3 OTU3 0.004263256 0.00000000 0.02909776 0.015535688
+## 4 OTU4 0.013855582 0.02296451 0.02784174 0.017441008
+## 5 OTU5 0.002131628 0.06949001 0.01800293 0.004836582
 
-    ##    OTU       S2.10      S2.11      S2.12       S2.13
-    ## 1 OTU1 0.110178524 0.01222786 0.22880469 0.178220724
-    ## 2 OTU2 0.017186251 0.26662690 0.02470170 0.000000000
-    ## 3 OTU3 0.004263256 0.00000000 0.02909776 0.015535688
-    ## 4 OTU4 0.013855582 0.02296451 0.02784174 0.017441008
-    ## 5 OTU5 0.002131628 0.06949001 0.01800293 0.004836582
+tax_tab <- read.table(tax_file, header = TRUE, comment.char = "", sep = "\t", fill = TRUE)
+names(tax_tab)[1] <- "OTU"
 
-    tax_tab <- read.table(tax_file, header = TRUE, comment.char = "", sep = "\t", fill = TRUE)
-    names(tax_tab)[1] <- "OTU"
-    tax_tab[1:5,1:4]
-
-    ##    OTU  kingdom          phylum                          class
-    ## 1 OTU1  Archaea  Thaumarchaeota Soil Crenarchaeotic Group(SCG)
-    ## 2 OTU2 Bacteria Verrucomicrobia                 Spartobacteria
-    ## 3 OTU3  Archaea  Thaumarchaeota Soil Crenarchaeotic Group(SCG)
-    ## 4 OTU4 Bacteria  Proteobacteria            Alphaproteobacteria
-    ## 5 OTU5  Archaea  Thaumarchaeota Soil Crenarchaeotic Group(SCG)
-
+tax_tab[1:5,1:4]
+##    OTU  kingdom          phylum                          class
+## 1 OTU1  Archaea  Thaumarchaeota Soil Crenarchaeotic Group(SCG)
+## 2 OTU2 Bacteria Verrucomicrobia                 Spartobacteria
+## 3 OTU3  Archaea  Thaumarchaeota Soil Crenarchaeotic Group(SCG)
+## 4 OTU4 Bacteria  Proteobacteria            Alphaproteobacteria
+## 5 OTU5  Archaea  Thaumarchaeota Soil Crenarchaeotic Group(SCG)
+```
 #### 3. Parse the taxonomic file
 
 This code removes useless annotations from the taxonomic annotation file, such as
@@ -98,154 +98,153 @@ This code removes useless annotations from the taxonomic annotation file, such a
 copying the previous taxonomic levels (while adding an 'unassigned'
 mention).
 
-    # Delete all cells containing 'uncultured' or 'unkown'
-    for (col in 2:ncol(tax_tab)) {
-        for (row in 1:nrow(tax_tab)) {
-            if (grepl("uncultured",tax_tab[row,col],ignore.case = TRUE)) {
-                tax_tab[row,col] <- ""
-            }
-            if (grepl("unknown",tax_tab[row,col],ignore.case = TRUE)) {
-                tax_tab[row,col] <- ""
+```r
+# Delete all cells containing 'uncultured' or 'unkown'
+for (col in 2:ncol(tax_tab)) {
+    for (row in 1:nrow(tax_tab)) {
+        if (grepl("uncultured",tax_tab[row,col],ignore.case = TRUE)) {
+            tax_tab[row,col] <- ""
+        }
+        if (grepl("unknown",tax_tab[row,col],ignore.case = TRUE)) {
+            tax_tab[row,col] <- ""
+        }
+    }
+}
+
+# Replace empty cells by 'NA'
+tax_tab2 <- as.data.frame(apply(tax_tab, 2, function(x) gsub("^$|^ $", NA, x)))
+
+# Remove columns containing only 'NA'
+col_to_remove <- c()
+
+for (col in 2:ncol(tax_tab2)) {
+    x <- sum(is.na(tax_tab2[,col]))/nrow(tax_tab2)
+    if (x == 1) {
+        col_to_remove <- c(col_to_remove, col)
+    }
+}
+
+if (length(col_to_remove) > 0) {
+    tax_tab3 <- tax_tab2[,-col_to_remove]
+} else {
+    tax_tab3 <- tax_tab2
+}
+
+# Set taxonomic annotations as character variables
+
+for (col in 2:ncol(tax_tab3)) {
+    tax_tab3[,col] <- as.character(tax_tab3[,col])
+}
+
+# Fill all NAs
+
+for (col in 1:ncol(tax_tab3)) {
+    for (row in 1:nrow(tax_tab3)) {
+        if (is.na(tax_tab3[row,col])) {
+            if (!grepl("OTU", tax_tab3[row,col-1]) & !grepl("unassigned", tax_tab3[row,col-1])) {
+                tax_tab3[row,col] <- paste0("unassigned ", tax_tab3[row,col-1])
+            } else {
+                tax_tab3[row,col] <- tax_tab3[row,col-1]
             }
         }
     }
-
-    # Replace empty cells by 'NA'
-    tax_tab2 <- as.data.frame(apply(tax_tab, 2, function(x) gsub("^$|^ $", NA, x)))
-
-    # Remove columns containing only 'NA'
-    col_to_remove <- c()
-
-    for (col in 2:ncol(tax_tab2)) {
-        x <- sum(is.na(tax_tab2[,col]))/nrow(tax_tab2)
-        if (x == 1) {
-            col_to_remove <- c(col_to_remove, col)
-        }
-    }
-
-    if (length(col_to_remove) > 0) {
-        tax_tab3 <- tax_tab2[,-col_to_remove]
-    } else {
-        tax_tab3 <- tax_tab2
-    }
-
-    # Set taxonomic annotations as character variables
-
-    for (col in 2:ncol(tax_tab3)) {
-        tax_tab3[,col] <- as.character(tax_tab3[,col])
-    }
-
-    # Fill all NAs
-
-    for (col in 1:ncol(tax_tab3)) {
-        for (row in 1:nrow(tax_tab3)) {
-            if (is.na(tax_tab3[row,col])) {
-                if (!grepl("OTU", tax_tab3[row,col-1]) & !grepl("unassigned", tax_tab3[row,col-1])) {
-                    tax_tab3[row,col] <- paste0("unassigned ", tax_tab3[row,col-1])
-                } else {
-                    tax_tab3[row,col] <- tax_tab3[row,col-1]
-                }
-            }
-        }
-    }
+}
+```
 
 #### 4. Compute the relative abundance of OTUs for each sample
 
 You can run this command even if your OTU table already contains
 relative abundances instead of reads counts. It won't hurt.
 
-    otu_counts <- colSums(otu_tab[,-1])
-    otu_tab2 <- otu_tab
-    otu_tab2[,-1] <- sweep(otu_tab[,-1], 2, otu_counts, `/`)
-    otu_tab2[is.na(otu_tab2)] <- 0
+```r
+otu_counts <- colSums(otu_tab[,-1])
+otu_tab2 <- otu_tab
+otu_tab2[,-1] <- sweep(otu_tab[,-1], 2, otu_counts, `/`)
+otu_tab2[is.na(otu_tab2)] <- 0
 
-    # Check that the sum of relative abundances for each sample is 1.
-    colSums(otu_tab2[,-1])
+# Check that the sum of relative abundances for each sample is 1.
+colSums(otu_tab2[,-1])
 
-    ## S2.10 S2.11 S2.12 S2.13 S2.14 S2.15 S2.16 S2.17 S2.18  S2.1  S2.2  S2.3 
-    ##     1     1     1     1     1     1     1     1     1     1     1     1 
-    ##  S2.4  S2.5  S2.6  S2.7  S2.8  S2.9 S1.1b  S1.1 S1.2b  S1.2 S1.3b  S1.3 
-    ##     1     1     1     1     1     1     1     1     1     1     1     1 
-    ## S1.4b  S1.4 
-    ##     1     1
-
+## S2.10 S2.11 S2.12 S2.13 S2.14 S2.15 S2.16 S2.17 S2.18  S2.1  S2.2  S2.3 
+##     1     1     1     1     1     1     1     1     1     1     1     1 
+##  S2.4  S2.5  S2.6  S2.7  S2.8  S2.9 S1.1b  S1.1 S1.2b  S1.2 S1.3b  S1.3 
+##     1     1     1     1     1     1     1     1     1     1     1     1 
+## S1.4b  S1.4 
+##     1     1
+```
 #### 5. Merge the OTU and taxonomic tables together
+```r
+m <- merge(otu_tab2, tax_tab3)
 
-    m <- merge(otu_tab2, tax_tab3)
+# Has the merged table the expected dimension?
+dim(m)
 
-    # Has the merged table the expected dimension?
-    dim(m)
-
-    ## [1] 3715   34
-
+## [1] 3715   34
+```
 #### 6. Aggregate the table to taxonomic level defined in the variable 'tax\_aggr'
+```r
+# First, we should save in a column the taxonomic information needed for computing the bubble plot
 
-    # First, we should save in a column the taxonomic information needed for computing the bubble plot
+taxonomy <- c()
+for (row in 1:nrow(m)) {
+    taxonomy <- c(taxonomy, paste0(m[row,names(m)==tax_col], ";", m[row,names(m)==tax_aggr]))
+}
 
-    taxonomy <- c()
-    for (row in 1:nrow(m)) {
-        taxonomy <- c(taxonomy, paste0(m[row,names(m)==tax_col], ";", m[row,names(m)==tax_aggr]))
-    }
+# Subset from the merged table the selected samples only
+m2 <- m[,names(m) %in% replicates_list]
 
-    # Subset from the merged table the selected samples only
-    m2 <- m[,names(m) %in% replicates_list]
+# Aggregate 'm2' based on the selected taxonomic level
+m3 <- aggregate(m2, by=list(taxonomy), FUN=sum)
 
-    # Aggregate 'm2' based on the selected taxonomic level
-    m3 <- aggregate(m2, by=list(taxonomy), FUN=sum)
+dim(m3)
+## [1] 330  19
 
-    dim(m3)
-
-    ## [1] 330  19
-
-    m3[1:5,1:4]
-
-    ##                                        Group.1      S2.10      S2.11 S2.12
-    ## 1                         Acidobacteria;ABS-19 0.00000000 0.00000000     0
-    ## 2 Acidobacteria;Acidobacteriaceae (Subgroup 1) 0.01212363 0.01968387     0
-    ## 3                         Acidobacteria;DS-100 0.00000000 0.00000000     0
-    ## 4                         Acidobacteria;Nov.24 0.00000000 0.00000000     0
-    ## 5                        Acidobacteria;PAUC26f 0.00000000 0.00000000     0
-
+m3[1:5,1:4]
+##                                        Group.1      S2.10      S2.11 S2.12
+## 1                         Acidobacteria;ABS-19 0.00000000 0.00000000     0
+## 2 Acidobacteria;Acidobacteriaceae (Subgroup 1) 0.01212363 0.01968387     0
+## 3                         Acidobacteria;DS-100 0.00000000 0.00000000     0
+## 4                         Acidobacteria;Nov.24 0.00000000 0.00000000     0
+## 5                        Acidobacteria;PAUC26f 0.00000000 0.00000000     0
+```
 #### 7. Sort the table by decreasing size of taxonomic groups
 
 Here we only keep the top n taxonomic groups, as defined in the
 `tax_number` variable. All the others taxonomic groups will be pooled
 together in a new bin labelled 'Other'.
+```r
+# Sort the taxonomic table
 
-    # Sort the taxonomic table
+if (tax_number > nrow(m3)) {
+        tax_number <- nrow(m3)
+    }
+    
+m3$average <- rowMeans(m3[,-1])
+m3.sorted <- m3[order(-m3$average),]
 
-    if (tax_number > nrow(m3)) {
-            tax_number <- nrow(m3)
-        }
-        
-    m3$average <- rowMeans(m3[,-1])
-    m3.sorted <- m3[order(-m3$average),]
+# Aggregate the smaller taxonomic bins together
+m3.sorted$selection <- rep("discarded", nrow(m3.sorted))
+m3.sorted$selection[1:tax_number] <- "retained"
+m3.sorted$Group.1[m3.sorted$selection == "discarded"] <- "Other;Other"
+m3.sorted$average <- NULL
+m3.sorted$selection <- NULL
+m4 <- aggregate(m3.sorted[,-1], by=list(taxonomy=m3.sorted$Group.1), FUN=sum)
 
-    # Aggregate the smaller taxonomic bins together
-    m3.sorted$selection <- rep("discarded", nrow(m3.sorted))
-    m3.sorted$selection[1:tax_number] <- "retained"
-    m3.sorted$Group.1[m3.sorted$selection == "discarded"] <- "Other;Other"
-    m3.sorted$average <- NULL
-    m3.sorted$selection <- NULL
-    m4 <- aggregate(m3.sorted[,-1], by=list(taxonomy=m3.sorted$Group.1), FUN=sum)
+# What is the relative abundances of the taxonomic bins that were pooled together in the 'Other' bin?
+m4[m4$taxonomy == "Other;Other", -1]
+##        S2.10     S2.11      S2.12     S2.13     S2.14     S2.15     S2.16
+## 23 0.1881162 0.0480167 0.09462005 0.1176902 0.1330054 0.1217922 0.1371706
+##        S2.17     S2.18       S2.1       S2.2       S2.3      S2.4
+## 23 0.1397341 0.2054837 0.04790419 0.07034463 0.04697761 0.2375701
+##         S2.5      S2.6      S2.7     S2.8      S2.9
+## 23 0.1740081 0.1765232 0.1460825 0.265434 0.1512048
 
-    # What is the relative abundances of the taxonomic bins that were pooled together in the 'Other' bin?
-    m4[m4$taxonomy == "Other;Other", -1]
+mean(as.numeric(m4[m4$taxonomy == "Other;Other", -1]))
+## [1] 0.1389821
 
-    ##        S2.10     S2.11      S2.12     S2.13     S2.14     S2.15     S2.16
-    ## 23 0.1881162 0.0480167 0.09462005 0.1176902 0.1330054 0.1217922 0.1371706
-    ##        S2.17     S2.18       S2.1       S2.2       S2.3      S2.4
-    ## 23 0.1397341 0.2054837 0.04790419 0.07034463 0.04697761 0.2375701
-    ##         S2.5      S2.6      S2.7     S2.8      S2.9
-    ## 23 0.1740081 0.1765232 0.1460825 0.265434 0.1512048
-
-    mean(as.numeric(m4[m4$taxonomy == "Other;Other", -1]))
-
-    ## [1] 0.1389821
-
-    # If you find these numbers too big, you can simply increase the value of the 'tax_number' variable,
-    # Or alternatively choose a higher taxonomic level to display
-
+# If you find these numbers too big, you can simply increase the value of the 'tax_number' variable,
+# Or alternatively choose a higher taxonomic level to display
+```
 #### 8. Transpose 'm4'
 
     n <- m4$taxonomy
