@@ -336,7 +336,6 @@ Few last steps before we can plot the data!
         <https://www.nceas.ucsb.edu/~frazier/RSpatialGuides/colorPaletteCheatsheet.pdf>
         for more information about colours in R.
 
-<!-- -->
 
     bubble_plot <- ggplot(molten2,aes(sample,tax_bin)) +
         #geom_point(aes(size=mean+sd), shape=16, color = "red") + 
