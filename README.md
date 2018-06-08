@@ -13,8 +13,8 @@ A R version of this script can be found [here](bubble_plot_script.R)
 #### 1. Import variables
 
 Here are the main variables to set up to use this script.
-
-    # Load the environment
+```r
+# Load the environment
     library("reshape2")
     library("stringr")
     library("ggplot2")
@@ -65,6 +65,7 @@ Here are the main variables to set up to use this script.
 
     # Dimension (in inch) of this file (first number is the width, the second number is the height)
     plot_dim <- c(6,6)
+```
 
 #### 2. Import files
 
