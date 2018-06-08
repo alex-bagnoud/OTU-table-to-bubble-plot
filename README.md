@@ -337,6 +337,7 @@ Few last steps before we can plot the data!
         for more information about colours in R.
 
 
+```r
     bubble_plot <- ggplot(molten2,aes(sample,tax_bin)) +
         #geom_point(aes(size=mean+sd), shape=16, color = "red") + 
         geom_point(aes(size=mean, fill=molten2$tax_col),shape=21,color="black") +
@@ -351,6 +352,7 @@ Few last steps before we can plot the data!
         scale_size(name = "Relative\nabundance")
 
     bubble_plot
+```    
 
 ![](bubble_plot.svg)
 
