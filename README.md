@@ -246,77 +246,73 @@ mean(as.numeric(m4[m4$taxonomy == "Other;Other", -1]))
 # Or alternatively choose a higher taxonomic level to display
 ```
 #### 8. Transpose 'm4'
-
-    n <- m4$taxonomy
-    m4.t <- as.data.frame(t(m4[,-1]))
-    colnames(m4.t) <- n
-    m4.t$sample <- rownames(m4.t)
-    rownames(m4.t) <- NULL
-
-
+```r
+n <- m4$taxonomy
+m4.t <- as.data.frame(t(m4[,-1]))
+colnames(m4.t) <- n
+m4.t$sample <- rownames(m4.t)
+rownames(m4.t) <- NULL
+```
 #### 9. Calculate the mean and the standard deviation for each sample
+```r
+m4.t$replicate <- rep(NA, nrow(m4.t))
+for (line in 1:(nrow(m4.t))){
+m4.t$replicate[line] <- replicates_groups[m4.t$sample[line] == replicates_list]
+}
 
-    m4.t$replicate <- rep(NA, nrow(m4.t))
-    for (line in 1:(nrow(m4.t))){
-        m4.t$replicate[line] <- replicates_groups[m4.t$sample[line] == replicates_list]
-    }
+# Compute the mean
+m4.t.mean <- aggregate(m4.t[,1:(ncol(m4.t)-2)],
+                              by = list(m4.t$replicate),
+                              FUN = "mean")
+names(m4.t.mean)[1] <- "sample"
 
-    # Compute the mean
-    m4.t.mean <- aggregate(m4.t[,1:(ncol(m4.t)-2)],
-                                  by = list(m4.t$replicate),
-                                  FUN = "mean")
-    names(m4.t.mean)[1] <- "sample"
+dim(m4.t.mean)                              
+## [1]  6 42
 
-    dim(m4.t.mean)                              
-
-    ## [1]  6 42
-
-    # Compute the standard deviation                             
-    m4.t.sd <- aggregate(m4.t[,1:(ncol(m4.t)-2)],
-                                  by = list(m4.t$replicate),
-                                  FUN = "sd")
-    names(m4.t.sd)[1] <- "sample"
+# Compute the standard deviation                             
+m4.t.sd <- aggregate(m4.t[,1:(ncol(m4.t)-2)],
+                              by = list(m4.t$replicate),
+                              FUN = "sd")
+names(m4.t.sd)[1] <- "sample"
                                   
-    dim(m4.t.sd)                              
-
-    ## [1]  6 42
-
+dim(m4.t.sd)                              
+## [1]  6 42
+```
 #### 10. Melt and merge the two dataframes
+```r
+# Melt the dataframes
+molten.mean <- melt(m4.t.mean, id.vars = "sample")
+molten.mean$id <- paste0(molten.mean$sample, "-", molten.mean$variable)
 
-    # Melt the dataframes
-    molten.mean <- melt(m4.t.mean, id.vars = "sample")
-    molten.mean$id <- paste0(molten.mean$sample, "-", molten.mean$variable)
+molten.sd <- melt(m4.t.sd, id.vars = "sample")
+molten.sd$id <- paste0(molten.sd$sample, "-", molten.sd$variable)
 
-    molten.sd <- melt(m4.t.sd, id.vars = "sample")
-    molten.sd$id <- paste0(molten.sd$sample, "-", molten.sd$variable)
-
-    # Merge the dataframes
-    molten <- merge(molten.mean, molten.sd, by.x = "id", by.y = "id")
+# Merge the dataframes
+molten <- merge(molten.mean, molten.sd, by.x = "id", by.y = "id")
 
 #### 11. Final rearragement of the dataframe
 
 Few last steps before we can plot the data!
 
-    molten$id <- NULL
-    molten$sample.y <- NULL
-    molten$variable.y <- NULL
-    names(molten) <- c("sample", "taxonomy", "mean", "sd")
+molten$id <- NULL
+molten$sample.y <- NULL
+molten$variable.y <- NULL
+names(molten) <- c("sample", "taxonomy", "mean", "sd")
 
-    molten$tax_col <- str_split_fixed(molten$taxonomy, ";", 2)[,1]
-    molten$tax_bin <- str_split_fixed(molten$taxonomy, ";", 2)[,2]
+molten$tax_col <- str_split_fixed(molten$taxonomy, ";", 2)[,1]
+molten$tax_bin <- str_split_fixed(molten$taxonomy, ";", 2)[,2]
 
-    # Reorder the taxonomic annotation for the plot
-    molten <- molten[order(molten$tax_col),]
-    tax_levels <- as.character(molten$tax_bin[!duplicated(molten$tax_bin)])
-    tax_levels <- tax_levels[tax_levels != "Other"]
-    tax_levels <- c(tax_levels, "Other")
-    molten$tax_bin <- factor(molten$tax_bin, levels = rev(tax_levels))
-    molten$tax_bin <- factor(molten$tax_bin)
+# Reorder the taxonomic annotation for the plot
+molten <- molten[order(molten$tax_col),]
+tax_levels <- as.character(molten$tax_bin[!duplicated(molten$tax_bin)])
+tax_levels <- tax_levels[tax_levels != "Other"]
+tax_levels <- c(tax_levels, "Other")
+molten$tax_bin <- factor(molten$tax_bin, levels = rev(tax_levels))
+molten$tax_bin <- factor(molten$tax_bin)
 
-
-    # Remove null values
-    molten2 <- molten[molten$mean > 0,]
-
+# Remove null values
+molten2 <- molten[molten$mean > 0,]
+```
 #### 12. Compute the bubble plot (finally!)
 
 -   If you want to display the standard deviation on the plot, you can
@@ -336,22 +332,21 @@ Few last steps before we can plot the data!
         <https://www.nceas.ucsb.edu/~frazier/RSpatialGuides/colorPaletteCheatsheet.pdf>
         for more information about colours in R.
 
+```r
+bubble_plot <- ggplot(molten2,aes(sample,tax_bin)) +
+    #geom_point(aes(size=mean+sd), shape=16, color = "red") + 
+    geom_point(aes(size=mean, fill=molten2$tax_col),shape=21,color="black") +
+    theme(panel.grid.major=element_line(linetype=1,color="grey"),
+          axis.text.x=element_text(angle=90,hjust=1,vjust=0),
+          panel.background = element_blank()) +
+    ylab("Taxnomic bins") +
+    xlab("Samples") +
+    scale_fill_brewer(palette="Paired", name="Taxonomic\nclade") +
+    #scale_fill_discrete(name="Taxonomic\nclade") +
+    #scale_fill_manual(values= c("maroon2", "pink", "#000000"), name="Taxonomic\nclade") +
+    scale_size(name = "Relative\nabundance")
 
-```
-    bubble_plot <- ggplot(molten2,aes(sample,tax_bin)) +
-        #geom_point(aes(size=mean+sd), shape=16, color = "red") + 
-        geom_point(aes(size=mean, fill=molten2$tax_col),shape=21,color="black") +
-        theme(panel.grid.major=element_line(linetype=1,color="grey"),
-              axis.text.x=element_text(angle=90,hjust=1,vjust=0),
-              panel.background = element_blank()) +
-        ylab("Taxnomic bins") +
-        xlab("Samples") +
-        scale_fill_brewer(palette="Paired", name="Taxonomic\nclade") +
-        #scale_fill_discrete(name="Taxonomic\nclade") +
-        #scale_fill_manual(values= c("maroon2", "pink", "#000000"), name="Taxonomic\nclade") +
-        scale_size(name = "Relative\nabundance")
-
-    bubble_plot
+bubble_plot
 ```    
 
 ![](bubble_plot.svg)
@@ -363,8 +358,9 @@ using Inkscape (free and open source; <https://inkscape.org/>) or Adobe
 Illustrator. Alternatively, the plot can be saved as pdf using the
 `pdf()` function instead of `svg()`.
 
-    svg(file_name, width = plot_dim[1], height = plot_dim[2])
-    bubble_plot
-    dev.off()
-
+```r
+svg(file_name, width = plot_dim[1], height = plot_dim[2])
+bubble_plot
+dev.off()
+```
 
