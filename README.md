@@ -307,7 +307,6 @@ tax_levels <- as.character(molten$tax_bin[!duplicated(molten$tax_bin)])
 tax_levels <- tax_levels[tax_levels != "Other"]
 tax_levels <- c(tax_levels, "Other")
 molten$tax_bin <- factor(molten$tax_bin, levels = rev(tax_levels))
-molten$tax_bin <- factor(molten$tax_bin)
 
 # Remove null values
 molten2 <- molten[molten$mean > 0,]
@@ -334,7 +333,7 @@ molten2 <- molten[molten$mean > 0,]
 ```r
 bubble_plot <- ggplot(molten2,aes(sample,tax_bin)) +
     #geom_point(aes(size=mean+sd), shape=16, color = "red") + 
-    geom_point(aes(size=mean, fill=molten2$tax_col),shape=21,color="black") +
+    geom_point(aes(size=mean, fill=tax_col),shape=21,color="black") +
     theme(panel.grid.major=element_line(linetype=1,color="grey"),
           axis.text.x=element_text(angle=90,hjust=1,vjust=0),
           panel.background = element_blank()) +
