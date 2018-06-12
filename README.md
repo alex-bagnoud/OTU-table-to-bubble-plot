@@ -337,7 +337,7 @@ bubble_plot <- ggplot(molten2,aes(sample,tax_bin)) +
     theme(panel.grid.major=element_line(linetype=1,color="grey"),
           axis.text.x=element_text(angle=90,hjust=1,vjust=0),
           panel.background = element_blank()) +
-    ylab("Taxnomic bins") +
+    ylab("Taxonomic bins") +
     xlab("Samples") +
     scale_fill_brewer(palette="Paired", name="Taxonomic\nclade") +
     #scale_fill_discrete(name="Taxonomic\nclade") +
