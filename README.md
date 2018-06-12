@@ -184,7 +184,6 @@ dim(m)
 #### 6. Aggregate the table to taxonomic level defined in the variable 'tax\_aggr'
 ```r
 # First, we should save in a column the taxonomic information needed for computing the bubble plot
-
 taxonomy <- c()
 for (row in 1:nrow(m)) {
     taxonomy <- c(taxonomy, paste0(m[row,names(m)==tax_col], ";", m[row,names(m)==tax_aggr]))
@@ -289,11 +288,11 @@ molten.sd$id <- paste0(molten.sd$sample, "-", molten.sd$variable)
 
 # Merge the dataframes
 molten <- merge(molten.mean, molten.sd, by.x = "id", by.y = "id")
-
+```
 #### 11. Final rearragement of the dataframe
 
 Few last steps before we can plot the data!
-
+```r
 molten$id <- NULL
 molten$sample.y <- NULL
 molten$variable.y <- NULL
