@@ -20,6 +20,7 @@ Here are the main variables to set up to use this script.
 library("reshape2")
 library("stringr")
 library("ggplot2")
+library("RColorBrewer")
 
 # Path to input files
 otu_tab_file <- "input_files/otu_table.txt"
@@ -346,7 +347,7 @@ bubble_plot <- ggplot(molten2,aes(sample,tax_bin)) +
     xlab("Samples") +
     scale_fill_brewer(palette="Paired", name="Taxonomic\nclade") +
     #scale_fill_discrete(name="Taxonomic\nclade") +
-    #scale_fill_manual(values= c("maroon2", "pink", "#000000"), name="Taxonomic\nclade") +
+    #scale_fill_manual(values= c(brewer.pal(12, "Paired"), brewer.pal(12, "Set3")), name="Taxonomic\nclade") +
     scale_size(name = "Relative\nabundance")
 
 bubble_plot
