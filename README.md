@@ -310,6 +310,9 @@ tax_levels <- tax_levels[tax_levels != "Other"]
 tax_levels <- c(tax_levels, "Other")
 molten$tax_bin <- factor(molten$tax_bin, levels = rev(tax_levels))
 
+# Reorder the samples for the plot
+molten$sample <- factor(molten$sample, levels = replicates_groups)
+
 # Remove null values
 molten2 <- molten[molten$mean > 0,]
 ```
