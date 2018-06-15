@@ -140,7 +140,7 @@ for (col in 2:ncol(tax_tab3)) {
 
 # Fill all NAs
 
-for (col in 1:ncol(tax_tab3)) {
+for (col in 2:ncol(tax_tab3)) {
     for (row in 1:nrow(tax_tab3)) {
         if (is.na(tax_tab3[row,col])) {
             if (!grepl("OTU", tax_tab3[row,col-1]) & !grepl("unassigned", tax_tab3[row,col-1])) {
