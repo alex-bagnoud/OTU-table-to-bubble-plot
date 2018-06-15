@@ -6,7 +6,9 @@ corresponding [annotation file](input_files/taxonomic_annotation.txt).
 Both input files should be tab-separated and contain as first column the 
 OTU identifiers. Of course those should be the same between the two
 files. Their first line should either contain the sample names (for the
-OTU table) or the phylogenetic levels of the taxonomic annotations.
+OTU table) or the phylogenetic levels of the taxonomic annotations. Or simply check
+the [OTU table](input_files/otu_table.txt) and the [annotation file]((input_files/taxonomic_annotation.txt) used to run this script, and use them as a template
+for your analysis.
 
 A R version of this script can be found [here](bubble_plot_script.R)
 
