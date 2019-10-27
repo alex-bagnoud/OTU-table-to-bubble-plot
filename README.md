@@ -353,7 +353,7 @@ bubble_plot <- ggplot(molten2,aes(sample,tax_bin)) +
 bubble_plot
 ```    
 
-![](bubble_plot.svg)
+![](picture/bubble_plot.svg)
 
 #### 13. Exporting the plot
 
